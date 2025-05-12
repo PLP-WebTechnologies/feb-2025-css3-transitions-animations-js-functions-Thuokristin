@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Animated Webpage</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .settings-panel {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .settings-panel select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .animated-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .animated-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .animated-image-container {
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .animated-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translateX(0);
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .animated-image.slide-in {
+            transform: translateX(100%);
+        }
+
+        .animated-image.slide-out {
+            transform: translateX(-100%);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pulsating-element {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .pulsating-element.animate {
+            animation: pulse 1s infinite alternate;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-panel">
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
+
+    <button class="animated-button" id="magicButton">Click Me for Magic</button>
+
+    <div class="animated-image-container">
+        <img id="animatedImage" class="animated-image" src="Citysnow.jpg" alt="Animated Image">
+    </div>
+
+    <div class="pulsating-element" id="pulseElement">Pulse</div>
+
+    <script>
+        const themeSelect = document.getElementById('theme-select');
+        const magicButton = document.getElementById('magicButton');
+        const animatedImage = document.getElementById('animatedImage');
+        const pulseElement = document.getElementById('pulseElement');
+
+        // --- Local Storage Functions ---
+        function savePreference(key, value) {
+            localStorage.setItem(key, value);
+        }
+
+        function getPreference(key, defaultValue) {
+            return localStorage.getItem(key) || defaultValue;
+        }
+
+        // --- Apply Stored Theme ---
+        function applyTheme(theme) {
+            document.body.style.backgroundColor = theme === 'dark' ? '#333' : '#f4f4f4';
+            document.body.style.color = theme === 'dark' ? '#eee' : '#333';
+        }
+
+        const storedTheme = getPreference('theme', 'light');
+        applyTheme(storedTheme);
+        themeSelect.value = storedTheme;
+
+        themeSelect.addEventListener('change', (event) => {
+            const selectedTheme = event.target.value;
+            applyTheme(selectedTheme);
+            savePreference('theme', selectedTheme);
+        });
+
+        // --- Button Animation on Click ---
+        magicButton.addEventListener('click', () => {
+            magicButton.classList.add('animate');
+            setTimeout(() => {
+                magicButton.classList.remove('animate');
+            }, 300); // Duration of the "click" animation
+        });
+
+        // --- Image Slide Animation ---
+        let isImageSlidIn = false;
+        animatedImage.addEventListener('click', () => {
+            animatedImage.classList.remove(isImageSlidIn ? 'slide-in' : 'slide-out');
+            animatedImage.classList.add(isImageSlidIn ? 'slide-out' : 'slide-in');
+            isImageSlidIn = !isImageSlidIn;
+        });
+
+        // --- Pulsating Element Animation Toggle ---
+        pulseElement.addEventListener('click', () => {
+            pulseElement.classList.toggle('animate');
+            const isAnimating = pulseElement.classList.contains('animate');
+            savePreference('pulseAnimation', isAnimating);
+        });
+
+        // --- Restore Pulsating Element State ---
+        const storedPulseState = getPreference('pulseAnimation', 'false');
+        if (storedPulseState === 'true') {
+            pulseElement.classList.add('animate');
+        }
+    </script>
+</body>
+</html>
